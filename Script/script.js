@@ -148,9 +148,7 @@ document.getElementById("keyboard").addEventListener("click", (event) => {
     } else if (keyValue === "⏎") {
         // Handle enter
         const rows = document.querySelectorAll(".row");
-        if (currentColumn === currentRange) {
             checkGuess(rows[currentRow]);
-        }
     } else if (keyValue.match(/^[a-zA-Z]$/) && currentColumn < currentRange) {
         // Handle letter input
         const rows = document.querySelectorAll(".row");
