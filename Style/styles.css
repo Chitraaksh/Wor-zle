@@ -1,0 +1,229 @@
+﻿/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #130d0d;
+    margin: 0;
+    padding: 0;
+    color: #ecf0f1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    max-width: 400px;
+    width: 90%; /* Responsive width */
+    text-align: center;
+    justify-content: center;
+}
+
+/* Header */
+h1 {
+    font-size: 28px;
+    color: #ecf0f1;
+    margin-bottom: 20px;
+}
+.credit {
+    position: absolute;
+    bottom: 30%;
+    right: 48%;
+    background-color: darkblue;
+    color: white;
+   
+}
+/* Paragraph */
+p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #bdc3c7;
+}
+
+/* Game Grid */
+#gameGrid {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr); /* 7 Rows */
+    row-gap: 5px;
+    column-gap: 5px;
+    justify-content: center;
+    
+}
+
+.row {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: repeat(7, 40px);
+    justify-content: center;
+}
+
+.letter-box {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #363231;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 40px;
+    background-color: #363231;
+    color: #ecf0f1;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transform: perspective(1000px);
+}
+
+/* Flip animation */
+@keyframes flip {
+    0% {
+        transform: rotateY(0);
+    }
+
+    50% {
+        transform: rotateY(90deg);
+        background-color: #363231; /* Keep the initial background color */
+    }
+
+    100% {
+        transform: rotateY(0);
+    }
+}
+
+/* Add the flip animation to the letter-box */
+.letter-box.flip {
+    animation: flip 0.6s ease-in-out;
+    animation-fill-mode: forwards; /* Ensure the final state is retained */
+}
+
+.letter-box.correct {
+    background-color: #27ae60; /* Green for correct letter and position */
+}
+
+.letter-box.present {
+    background-color: #f39c12; /* Yellow for correct letter but wrong position */
+}
+
+.letter-box.absent {
+    background-color: #e74c3c; /* Red for incorrect letter */
+}
+
+/* On-Screen Keyboard */
+.keyboard {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center; /* Center the keys in each row */
+}
+
+.key {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 40px; /* Center the text vertically */
+    display: flex;
+    justify-content: center; /* Center the text horizontally */
+    align-items: center; /* Center the text vertically */
+}
+
+    .key.correct {
+        background-color: #27ae60; /* Green for correct letter */
+    }
+
+    .key.present {
+        background-color: #f39c12; /* Yellow for present letter */
+    }
+
+    .key.absent {
+        background-color: #e74c3c; /* Red for absent letter */
+    }
+
+    .key:active {
+        transform: scale(0.95);
+    }
+
+/* Special styling for the Backspace key */
+#backspace {
+    flex-grow: 1; /* Make the Backspace key wider */
+    text-align: center;
+}
+
+/* Buttons */
+button, a {
+    font-size: 18px;
+    padding: 10px 20px;
+    color: #fff;
+    background: #3498db;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+    button:hover, a:hover {
+        background: #2980b9;
+    }
+
+    button:disabled {
+        background: #7f8c8d;
+        cursor: not-allowed;
+    }
+
+/* Range Selector */
+#rangeSelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#rangeDisplay {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ecf0f1;
+    margin: 0 10px;
+}
+
+/* Enabled styles */
+.increment-enabled {
+    background-color: #20870f; /* Green for increment button */
+    cursor: pointer;
+}
+
+    .increment-enabled:hover {
+        background-color: #135e0e; /* Darker green on hover */
+    }
+
+.decrement-enabled {
+    background-color: red; /* Orange for decrement button */
+    cursor: pointer;
+}
+
+    .decrement-enabled:hover {
+        background-color: darkred; /* Darker orange on hover */
+    }
+
+/* Disabled style (shared for both buttons) */
+.button-disabled {
+    background-color: #7f8c8d; /* Gray for disabled buttons */
+    cursor: not-allowed;
+}
+.startbtn-disabled {
+    cursor: not-allowed;
+}
