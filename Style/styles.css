@@ -16,8 +16,11 @@ body {
 .container {
     max-width: 400px;
     width: 90%; /* Responsive width */
+    display: flex;
+    flex-direction: column;
     text-align: center;
     justify-content: center;
+    align-items: center;
 }
 
 /* Header */
@@ -28,11 +31,14 @@ h1 {
 }
 
 .credit {
-    position: absolute;
-    bottom: 30%;
-    right: 48%;
     background-color: darkblue;
     color: white;
+    padding: 5px 10px;
+    font-size: 14px; 
+    border-radius: 4px; 
+    text-align: center; 
+    width: fit-content; 
+    margin-top: 10px;
 }
 /* Paragraph */
 p {
@@ -136,7 +142,7 @@ p {
     min-width: 25px; /* Enforce minimum width */
     max-width: 25px; /* Enforce maximum width */
     height: 40px; /* Fixed height for keys */
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
     text-transform: uppercase;
     background-color: #444;
@@ -233,7 +239,16 @@ button, a {
     background-color: #7f8c8d; /* Gray for disabled buttons */
     cursor: not-allowed;
 }
-
-.startbtn-disabled {
-    cursor: not-allowed;
+.startbtn {
+    padding: 10px 20px; /* Add padding for spacing around the text */
+    font-size: 16px; /* Adjust font size */
+    font-weight: bold; /* Make the text bold */
+    color: #fff; /* Text color */
+    border: none; /* Remove border */
+    text-align: center; /* Center the text */
+    white-space: nowrap; /* Prevent text from wrapping */
 }
+
+    .startbtn:disabled {
+        cursor: not-allowed; /* Change cursor to not-allowed */
+    }
