@@ -132,9 +132,9 @@ p {
 .key {
     all: unset;
     flex: 0 1 auto; /* Prevent growing, allow shrinking */
-    width: 30px; /* Default width for keys */
-    min-width: 30px; /* Enforce minimum width */
-    max-width: 30px; /* Enforce maximum width */
+    width: 25px; /* Default width for keys */
+    min-width: 25px; /* Enforce minimum width */
+    max-width: 25px; /* Enforce maximum width */
     height: 40px; /* Fixed height for keys */
     font-size: 16px;
     font-weight: bold;
