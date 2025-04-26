@@ -208,25 +208,44 @@ async function checkGuess(row) {
 
     let correct = 0;
 
+    // Create a map to track the occurrences of each letter in the target word
+    const targetLetterCounts = {};
+    targetWord.split("").forEach((letter) => {
+        targetLetterCounts[letter] = (targetLetterCounts[letter] || 0) + 1;
+    });
+
+    // First pass: Check for correct letters in the correct positions (green)
     guess.split("").forEach((letter, index) => {
         const box = row.children[index];
         setTimeout(() => {
-            box.classList.add("flip");
+            box.classList.add("flip"); // Add flip animation
         }, index * 200);
 
         setTimeout(() => {
             if (letter === targetWord[index]) {
-                box.classList.add("correct");
+                box.classList.add("correct"); // Green for correct letter and position
                 updateKeyboard(letter, "correct");
                 correct++;
-            } else if (targetWord.includes(letter)) {
-                box.classList.add("present");
-                updateKeyboard(letter, "present");
-            } else {
-                box.classList.add("absent");
-                updateKeyboard(letter, "absent");
+                targetLetterCounts[letter]--; // Decrement the count for this letter
             }
         }, index * 200 + 300);
+    });
+
+    // Second pass: Check for correct letters in the wrong positions (yellow)
+    guess.split("").forEach((letter, index) => {
+        const box = row.children[index];
+        if (!box.classList.contains("correct")) {
+            setTimeout(() => {
+                if (targetWord.includes(letter) && targetLetterCounts[letter] > 0) {
+                    box.classList.add("present"); // Yellow for correct letter but wrong position
+                    updateKeyboard(letter, "present");
+                    targetLetterCounts[letter]--; // Decrement the count for this letter
+                } else {
+                    box.classList.add("absent"); // Red for incorrect letter
+                    updateKeyboard(letter, "absent");
+                }
+            }, index * 200 + 300);
+        }
     });
 
     setTimeout(() => {
