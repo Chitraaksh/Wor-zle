@@ -1,4 +1,12 @@
-﻿let currentRange = 5; // Default range
+let currentRange = 5; // Default range
+
+// Initialize solvedWords and lostWords arrays in localStorage
+if (!localStorage.getItem("solvedWords")) {
+    localStorage.setItem("solvedWords", JSON.stringify([]));
+}
+if (!localStorage.getItem("lostWords")) {
+    localStorage.setItem("lostWords", JSON.stringify([]));
+}
 
 // Update the displayed range
 function updateRangeDisplay() {
@@ -37,23 +45,32 @@ function updateButtonStates() {
 // Check if today's word for the current range is solved or lost
 function checkGameState() {
     const today = new Date().toISOString().split("T")[0];
-    const solvedData = JSON.parse(localStorage.getItem("solvedWord")) || {};
-    const lostData = JSON.parse(localStorage.getItem("lostWord")) || {};
+    const solvedWords = JSON.parse(localStorage.getItem("solvedWords")) || [];
+    const lostWords = JSON.parse(localStorage.getItem("lostWords")) || [];
     const startButton = document.getElementById("startButton");
 
-    if (solvedData.date === today && solvedData.range === currentRange) {
+    // Check if the current range is solved
+    const solvedEntry = solvedWords.find(entry => entry.date === today && entry.range === currentRange);
+    if (solvedEntry) {
         startButton.disabled = true;
-        startButton.textContent = `Today's word is solved: ${solvedData.word}`;
+        startButton.textContent = `Solved! Today's word: ${solvedEntry.word}`;
         startButton.classList.add("startbtn-disabled");
-    } else if (lostData.date === today && lostData.range === currentRange) {
-        startButton.disabled = true;
-        startButton.textContent = `Today's word was: ${lostData.word}`;
-        startButton.classList.add("startbtn-disabled");
-    } else {
-        startButton.disabled = false;
-        startButton.textContent = "Start Game";
-        startButton.classList.remove("startbtn-disabled");
+        return;
     }
+
+    // Check if the current range is lost
+    const lostEntry = lostWords.find(entry => entry.date === today && entry.range === currentRange);
+    if (lostEntry) {
+        startButton.disabled = true;
+        startButton.textContent = `Lost! Word : ${lostEntry.word}`;
+        startButton.classList.add("startbtn-disabled");
+        return;
+    }
+
+    // If not solved or lost, enable the start button
+    startButton.disabled = false;
+    startButton.textContent = "Start Game";
+    startButton.classList.remove("startbtn-disabled");
 }
 
 // Increment the range
@@ -82,4 +99,3 @@ document.getElementById("startButton").addEventListener("click", () => {
 // Initialize the display and button states on page load
 updateRangeDisplay();
 checkGameState();
-
