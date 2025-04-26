@@ -1,4 +1,4 @@
-﻿// Game Variables
+// Game Variables
 let currentRow = 0;
 let currentColumn = 0;
 let targetWord = "";
@@ -7,11 +7,25 @@ let maxGuesses = 7;
 // Fetch the selected range from localStorage
 const currentRange = parseInt(localStorage.getItem("wordRange")) || 5;
 
+// Initialize solvedWords and lostWords arrays in localStorage
+if (!localStorage.getItem("solvedWords")) {
+    localStorage.setItem("solvedWords", JSON.stringify([]));
+}
+if (!localStorage.getItem("lostWords")) {
+    localStorage.setItem("lostWords", JSON.stringify([]));
+}
+
 // Function to fetch words from the local words.json file
 async function fetchWordsFromDatabase() {
     const response = await fetch('DataBase/words.json');
     if (!response.ok) throw new Error("Failed to load word database.");
     return await response.json();
+}
+// Function to validate a word using the Datamuse API
+async function isValidWord(word) {
+    const response = await fetch(`https://api.datamuse.com/words?sp=${word}&max=1`);
+    const data = await response.json();
+    return data.length > 0 && data[0].word.toUpperCase() === word.toUpperCase();
 }
 
 // Function to generate a consistent word of the day
@@ -28,30 +42,27 @@ async function fetchWordOfTheDay(length) {
     return words[index];
 }
 
-// Function to validate a word using the Datamuse API
-async function isValidWord(word) {
-    const response = await fetch(`https://api.datamuse.com/words?sp=${word}&max=1`);
-    const data = await response.json();
-    return data.length > 0 && data[0].word.toUpperCase() === word.toUpperCase();
-}
-
 // Start the game
 async function startGame() {
     // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split("T")[0];
 
-    // Check if today's word for the current range is already solved or lost
-    const solvedData = JSON.parse(localStorage.getItem("solvedWord")) || {};
-    const lostData = JSON.parse(localStorage.getItem("lostWord")) || {};
+    // Fetch solvedWords and lostWords arrays from localStorage
+    const solvedWords = JSON.parse(localStorage.getItem("solvedWords")) || [];
+    const lostWords = JSON.parse(localStorage.getItem("lostWords")) || [];
 
-    if (solvedData.date === today && solvedData.range === currentRange) {
-        alert(`Today's word is already solved: ${solvedData.word}. Try again tomorrow!`);
+    // Check if today's word for the current range is already solved or lost
+    const solvedEntry = solvedWords.find(entry => entry.date === today && entry.range === currentRange);
+    const lostEntry = lostWords.find(entry => entry.date === today && entry.range === currentRange);
+
+    if (solvedEntry) {
+        alert(`Today's ${currentRange}-letter word is already solved: ${solvedEntry.word}. Try again tomorrow!`);
         window.location.href = "index.html"; // Redirect to index.html
         return;
     }
 
-    if (lostData.date === today && lostData.range === currentRange) {
-        alert(`You already lost today's word. Try again tomorrow!`);
+    if (lostEntry) {
+        alert(`You already lost today's ${currentRange}-letter word: ${lostEntry.word}. Try again tomorrow!`);
         window.location.href = "index.html"; // Redirect to index.html
         return;
     }
@@ -71,8 +82,6 @@ async function startGame() {
     alert("Game Started! Enter your guesses.");
 }
 
-
-
 // Setup the game grid
 function setupGrid() {
     const gameGrid = document.getElementById("gameGrid");
@@ -88,7 +97,6 @@ function setupGrid() {
         } else {
             console.warn("grid-template-columns is not supported in this browser.");
         }
-
 
         for (let j = 0; j < currentRange; j++) {
             const box = document.createElement("div");
@@ -148,7 +156,7 @@ document.getElementById("keyboard").addEventListener("click", (event) => {
     } else if (keyValue === "⏎") {
         // Handle enter
         const rows = document.querySelectorAll(".row");
-            checkGuess(rows[currentRow]);
+        checkGuess(rows[currentRow]);
     } else if (keyValue.match(/^[a-zA-Z]$/) && currentColumn < currentRange) {
         // Handle letter input
         const rows = document.querySelectorAll(".row");
@@ -222,15 +230,14 @@ async function checkGuess(row) {
     });
 
     setTimeout(() => {
+        const today = new Date().toISOString().split("T")[0];
         if (correct === currentRange) {
             alert(`You win, the word was ${targetWord}.`);
 
             // Save the solved word and date in localStorage
-            const today = new Date().toISOString().split("T")[0];
-            localStorage.setItem(
-                "solvedWord",
-                JSON.stringify({ date: today, range: currentRange, word: targetWord })
-            );
+            const solvedWords = JSON.parse(localStorage.getItem("solvedWords")) || [];
+            solvedWords.push({ date: today, range: currentRange, word: targetWord });
+            localStorage.setItem("solvedWords", JSON.stringify(solvedWords));
 
             // Redirect to index.html after 5 seconds
             setTimeout(() => {
@@ -247,12 +254,10 @@ async function checkGuess(row) {
         if (currentRow >= maxGuesses) {
             alert(`You lost, the word was ${targetWord}.`);
 
-            // Save the loss information in localStorage
-            const today = new Date().toISOString().split("T")[0];
-            localStorage.setItem(
-                "lostWord",
-                JSON.stringify({ date: today, range: currentRange, word: targetWord })
-            );
+            // Save the lost word and date in localStorage
+            const lostWords = JSON.parse(localStorage.getItem("lostWords")) || [];
+            lostWords.push({ date: today, range: currentRange, word: targetWord });
+            localStorage.setItem("lostWords", JSON.stringify(lostWords));
 
             // Redirect to index.html after 5 seconds
             setTimeout(() => {
@@ -261,7 +266,6 @@ async function checkGuess(row) {
         }
     }, currentRange * 200 + 300);
 }
-
 
 // Update keyboard key colors based on guess
 function updateKeyboard(letter, status) {
